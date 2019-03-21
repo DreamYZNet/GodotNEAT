@@ -229,8 +229,10 @@ func printCurrentResults():
 	printSpeciesResults(bestSpeciesAllTime, bestSpeciesAllTime.queen, "All Time:", bestSpeciesAllTime.fitnessAllTime)
 	print("M: All:%s One:%s Many:%s Axon:%s Neuron:%s InWgt:%s InAll:%s OutWgt:%s OutAll:%s"%mutationStrings)
 	print(timeToString(timePassed(startingTime)))
+
 func printSpeciesResults(specie, queen, startStr, fitness):
 	print(startStr+" S#:" + str(specie.id)+" Size:" + str(specie.genomes.size())+" Fitness:" + str(fitness)+" Stale:" + str(specie.staleness)+"/"+str(maxStaleness)+"     M:"+queen.lastMutationStr()+" Axons:" + str(queen.neuralNet.axons.size())+" Neurons:" + str(queen.neuralNet.neurons.size()-(queen.neuralNet.layers[0].size()+queen.neuralNet.layers[queen.neuralNet.layers.size()-1].size()))+" Depth:" + str(queen.neuralNet.layers.size()-2)+" Children:" + str(specie.children.size())+" Parent#:" + str(specie.parent))
+
 func mutationString(mutation):
 	var one = recordMutationsFitness[mutation]
 	var two = recordMutations[mutation]
@@ -251,9 +253,6 @@ func selectBestSpecies():
 		if s.fitnessLastGen > bestSpeciesLastGen.fitnessLastGen:
 			bestSpeciesLastGen = s
 	return bestSpecies
-#
-#func setInputAmount(amount):
-#
 	
 func nextGeneration():
 	generation += 1
@@ -312,7 +311,6 @@ func generateNextGeneration():
 	if rankedSpecieSize:
 		for i in range(speciesValues.size()):
 			totalSizingValue += pow(i+1, speciesSizeExponent)
-#		quickSort(speciesValues, funcref(self,"sortByFitness")) WHY WAS THIS HERE??
 	else:
 		totalSizingValue = totalFitness(speciesValues, speciesSizeExponent) #used for size
 	#Create new genomes for every specie
@@ -343,6 +341,7 @@ func generateNextGeneration():
 			
 			alterGenome(newGenome, s, speciesValues)
 			sortGenomeToSpecies(newGenome, s, speciesValues, checkHostFirst)
+			
 func alterGenome(newGenome, s, speciesValues):
 	#Mutate or crossover
 	var rand = randi()%totalChance()
@@ -373,6 +372,7 @@ func alterGenome(newGenome, s, speciesValues):
 		if not success:
 			mutate(newGenome)
 			#print("Failed to find crossover")
+			
 func sortGenomeToSpecies(newGenome, s, speciesValues = species.values(), checkHostFirst = false):
 	var hostSpecie = s
 	if maxSpeciesDifference == 0:
@@ -502,7 +502,6 @@ func crossover(g1, g2, copyAxons = false, copyNeurons = false, adjustNeurons = f
 					neuron.to = []
 					neuron.from = []
 					newNeurons.push_back(neuron)
-#					g1.neuralNet.addNeuron(neuron)
 				#Adjust neurons
 				if adjustNeurons:
 					#sort new neurons by layer
@@ -525,14 +524,6 @@ func crossover(g1, g2, copyAxons = false, copyNeurons = false, adjustNeurons = f
 										break
 							if fromNeuron.layer >= n.layer:
 								n.layer = fromNeuron.layer+1
-#								g1.neuralNet.setLayerOfNeuron(n, fromNeuron.layer+1)
-					#find highest layer
-#					var highestLayer = g1.neuralNet.layerCount-1
-#					for n in neurons:
-#						var neuron = g1.neuralNet.neurons[n]
-#						if neuron.layer > highestLayer:
-#							highestLayer = neuron.layer
-#					g1.neuralNet.updateLayerCount(highestLayer)
 
 				#After sufficient calculations, we can add the neuron
 				for n in newNeurons:
@@ -595,18 +586,22 @@ func quickSort(array, sortFunc = funcref(self,"sortBySelf"), sortTheseToo = [], 
 				swapArrayPositions(array2, from, to)
 			low -= 1
 			high += 1
+			
 func sortBySelf(a, b):
 	if a > b:
 		return true
 	return false
+	
 func sortByFitness(a, b):
 	if a.fitness > b.fitness:
 		return true
 	return false
+	
 func sortByLayer(a, b):
 	if a.layer > b.layer:
 		return true
 	return false
+	
 func swapArrayPositions(array, pos1, pos2):
 	var temp = array[pos1]
 	array[pos1] = array[pos2]
@@ -638,11 +633,6 @@ func findSharedGenes(genes1, genes2):
 			shared.push_back(id)
 		else:
 			g1exclusive.push_back(id)
-#	for axon in g1.neuralNet.disabled:
-#		if g2.neuralNet.disabled.has(axon.id) or g2.neuralNet.axons.has(axon.id):
-#			shared.push_back(axon.id)
-#		else:
-#			g1exclusive.push_back(axon.id)
 	return [shared, g1exclusive]
 	
 #excludes disabled, requires genes to be ordered by id (NEEDS TO BE DONE REQUIRES COMPUTATION)
@@ -702,10 +692,4 @@ func timeToString(time):
 		string += "Min:%s "%[time["minute"]]
 	string += "Sec:%s "%[time["second"]]
 	return string
-	
-	
-	
-	
-	
-	
 	
